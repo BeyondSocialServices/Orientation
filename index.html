@@ -290,7 +290,7 @@ function showModal(title, text) {
     function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) showSection(nextId); else alert("Incorrect or incomplete answers."); }
 
     // Replace 'YOUR_WEB_APP_URL' with the URL you got from the Google Apps Script
-    const WEB_APP_URL = 'YOUR_WEB_APP_URL';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyvVxozjNm1hb9eRNOOhM8r9cCZTB6q9OCkxvwHZ2tZ77DxKy5rG6M9CMaAkTNApp4_JQ/exec';
     
     function submitToSheet() {
         const now = new Date();
