@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beyond Social Services | E-Learning</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         :root { --primary: #2563eb; }
         body { background-color: #f8fafc; font-family: sans-serif; }
@@ -17,15 +18,15 @@
         .option-box.selected { border-color: var(--primary); background: #eff6ff; font-weight: 700; color: var(--primary); }
         .btn-primary { background: var(--primary); border: none; padding: 12px; font-weight: 600; }
         .question-box { background: #f8fafc; border-left: 6px solid #2563eb; padding: 15px 20px; color: #1e293b; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .quiz-separator { border-top: 2px solid #e2e8f0; margin: 30px 0; }
+        .quiz-separator { border-top: 2px solid #e2e8f0; margin: 30px 0; padding-top: 10px; }
         .card-game { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .card-wrapper { height: 100px; cursor: pointer; position: relative; }
+        .card-wrapper { height: 100px; cursor: pointer; position: relative; z-index: 1; }
         .card-back, .card-front { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; pointer-events: none; }
-        .card-back { background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .card-back { background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
         .card-front { display: none; object-fit: cover; }
         .flipped .card-back { display: none; }
         .flipped .card-front { display: block; }
-        .hotspot { position: absolute; cursor: pointer; z-index: 10; }
+        .hotspot { position: absolute; cursor: pointer; background: transparent; z-index: 10; }
         .hotspot:hover { background: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
@@ -33,17 +34,30 @@
 
 <div class="container py-5" style="max-width: 550px;">
     <div class="text-center mb-4"><img src="Logo.PNG" style="max-height: 80px;"></div>
+
     <div class="card main-card">
-        <div id="progressArea" class="d-none mb-4"><div class="progress" style="height: 8px;"><div id="waterLevel" class="progress-bar" style="width: 0%"></div></div></div>
+        <div id="progressArea" class="d-none mb-4">
+            <div class="progress" style="height: 8px;"><div id="waterLevel" class="progress-bar" style="width: 0%"></div></div>
+        </div>
         
-        <div id="sect_login" class="section active">
-            <h1 class="h4 mb-3">Welcome</h1>
+        <div id="sect_login" class="section">
+            <h1 class="h4 mb-3">Welcome to the E-learning Portal</h1>
             <input type="password" id="passInput" class="form-control mb-3" placeholder="Access Code">
             <button class="btn btn-primary w-100" onclick="login()">Enter Portal</button>
         </div>
 
         <div id="sect_instruct" class="section">
             <h1 class="h4 mb-3">Welcome!</h1>
+            <div class="alert alert-info">
+                <strong>Instructions for volunteers :</strong>
+                <ul class="mb-0">
+                    <li>You are required to watch all videos carefully.</li>
+                    <li>Please proceed to answer the quiz questions that follow.</li>
+                    <li>The "Proceed" button will unlock automatically after you've watched the video and answered all questions.</li>
+                    <li>Please do not refresh the page unnecessarily.</li>
+                    <li>Please keep a screenshot of the completion certificate at the end.</li>
+                </ul>
+            </div>
             <input type="text" id="nameInput" class="form-control mb-3" placeholder="Your Full Name">
             <select id="typeInput" class="form-control mb-3">
                 <option value="" disabled selected>Select Registration Type</option>
@@ -54,47 +68,121 @@
             <button class="btn btn-primary w-100" onclick="startCourse()">Begin Training</button>
         </div>
 
-        <div id="sect_A" class="section">...</div>
+        <div id="sect_A" class="section"><h2 class="h5">Section A: Introduction to Beyond</h2>
+            <div class="video-desc">This video provides an overview of our beginning, mission and vision.</div>
+            <div class="ratio ratio-16x9 my-3"><iframe src="https://www.youtube.com/embed/HYiSWDbvM60" allowfullscreen></iframe></div>
+            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="showSection('sect_B')">Please wait...</button></div>
+
+        <div id="sect_B" class="section"><h2 class="h5">Section B: Who do we serve?</h2>
+            <div class="video-desc">Learn about the community we serve!</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectB.mp4" type="video/mp4"></video></div>
+            <div class="question-box">Despite our nation's progress, some community members face difficulties. Why?</div>
+            <div id="group_B1"><div class="option-box" onclick="selectOpt(this, 'B1', 'A')">Intentional poor person decisions</div><div class="option-box" onclick="selectOpt(this, 'B1', 'B')">Systematic barriers</div><div class="option-box" onclick="selectOpt(this, 'B1', 'C')">Lack of dreams</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">What does "marginalised" mean?</div>
+            <div id="group_B2"><div class="option-box" onclick="selectOpt(this, 'B2', 'A')">Pushed to the edge/lack access</div><div class="option-box" onclick="selectOpt(this, 'B2', 'B')">Chosen separation</div><div class="option-box" onclick="selectOpt(this, 'B2', 'C')">Higher income living modestly</div></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('B', 'sect_C')">Submit</button></div>
+
+        <div id="sect_C" class="section"><h2 class="h5">Section C: Rental Neighbourhoods</h2>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectC.mp4" type="video/mp4"></video></div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="Zakia.mp4" type="video/mp4"></video></div>
+            <div class="question-box">According to Zakia, where do the youths turn to as their "safe space"?</div>
+            <div id="group_C1"><div class="option-box" onclick="selectOpt(this, 'C1', 'A')">Community</div><div class="option-box" onclick="selectOpt(this, 'C1', 'B')">Schools</div><div class="option-box" onclick="selectOpt(this, 'C1', 'C')">Relatives</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">How did the youths express their emotions?</div>
+            <div id="group_C2"><div class="option-box" onclick="selectOpt(this, 'C2', 'A')">Talking to a counsellor</div><div class="option-box" onclick="selectOpt(this, 'C2', 'B')">Drawing and Arts</div><div class="option-box" onclick="selectOpt(this, 'C2', 'C')">Keep it to themselves</div></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('C', 'sect_D')">Submit</button></div>
+
+        <div id="sect_D" class="section">
+            <h2 class="h5">Section D: What do you see?</h2>
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <img src="Activity.PNG" class="img-fluid my-3" style="width: 100%;">
+                <div class="hotspot" style="top: 58%; left: 10%; width: 10%; height: 16%;" onclick="handleHotspot('weakness', 'Observation: Isolated elderly. Focus on positives.')"></div>
+                <div class="hotspot" style="top: 75%; left: 24%; width: 12%; height: 20%;" onclick="handleHotspot('strength', 'Right! Neighbours helping out!')"></div>
+            </div>
+            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="showSection('sect_E')">Proceed to Next</button>
         </div>
+
+        <div id="sect_E" class="section"><h2 class="h5">Section E: Our Approach</h2>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectE.mp4" type="video/mp4"></video></div>
+            <div class="question-box">At Beyond, we focus on:</div>
+            <div id="group_E1"><div class="option-box" onclick="selectOpt(this, 'E1', 'A')">Easy</div><div class="option-box" onclick="selectOpt(this, 'E1', 'B')">Wrong</div><div class="option-box" onclick="selectOpt(this, 'E1', 'C')">Strong</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">What is an "asset"?</div>
+            <div id="group_E2"><div class="option-box" onclick="selectOpt(this, 'E2', 'A')">Flat/money</div><div class="option-box" onclick="selectOpt(this, 'E2', 'B')">Strengths/skills/talents</div><div class="option-box" onclick="selectOpt(this, 'E2', 'C')">Sponsors</div></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('E', 'sect_F')">Submit</button></div>
+
+        <div id="sect_F" class="section"><h2 class="h5">Section F: Summary</h2>
+            <img src="COC.jpg" class="img-fluid">
+            <div class="card-game" id="memory-game"></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="showSection('sect_G')">Match all pairs</button>
+        </div>
+
+        <div id="sect_G" class="section">
+            <div style="border: 10px solid #2563eb; padding: 40px; text-align: center;">
+                <h1>Certificate of Completion</h1>
+                <h2 id="outName">[Name]</h2>
+                <p id="compDate"></p>
+            </div>
+            <button class="btn btn-primary w-100 mt-4" onclick="window.print()">Print</button>
+        </div>
+    </div>
 </div>
 
-<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog"><div class="modal-content"><div class="modal-body">
-      <h5 id="modalTitle"></h5><p id="modalText"></p>
-      <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Close</button>
-  </div></div></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const sectionMap = { 'sect_A': {width:'14%', timer:10}, 'sect_B': {width:'28%', timer:10}, 'sect_C': {width:'42%', timer:10}, 'sect_D': {width:'57%', timer:0}, 'sect_E': {width:'71%', timer:10}, 'sect_F': {width:'85%', timer:0}, 'sect_G': {width:"100%", timer:0} };
     const answers = { 'B': {q1:'B', q2:'A'}, 'C': {q1:'A', q2:'B'}, 'E': {q1:'C', q2:'B'} };
-    let selections = {}, flippedCards = [], clickedMatches = 0;
+    let selections = {}, flippedCards = [], matchedPairs = 0, clickedMatches = 0;
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyvVxozjNm1hb9eRNOOhM8r9cCZTB6q9OCkxvwHZ2tZ77DxKy5rG6M9CMaAkTNApp4_JQ/exec';
 
-    function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else alert("Wrong code."); }
-    function startCourse() { 
-        const n = document.getElementById('nameInput'), t = document.getElementById('typeInput');
-        if(!n.value.trim() || !t.value) alert("Fill all fields."); 
-        else { localStorage.setItem('vName', n.value); localStorage.setItem('vType', t.value); document.getElementById('progressArea').classList.remove('d-none'); showSection('sect_A'); }
+    function initGame() {
+        const grid = document.getElementById('memory-game');
+        grid.innerHTML = '';
+        const cardData = [{name:'c1',img:'Flip1.jpg',title:'Assets',text:'Focus on strengths!'},{name:'c2',img:'Flip2.jpg',title:'ABCD',text:'Everyone plays a role!'},{name:'c3',img:'Flip3.jpg',title:'Strong',text:'Focus on possibilities!'}];
+        let deck = [...cardData, ...cardData].sort(() => Math.random() - 0.5);
+        deck.forEach(item => {
+            grid.innerHTML += `<div class="card-wrapper" onclick="flipCard(this)" data-name="${item.name}" data-title="${item.title}" data-text="${item.text}"><div class="card-back">?</div><img src="${item.img}" class="card-front"></div>`;
+        });
     }
-    function showModal(title, text) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalText').innerText = text; new bootstrap.Modal(document.getElementById('infoModal')).show(); }
-    function handleHotspot(type, message) { showModal("Observation", message); if (type === 'strength') { const btn = document.querySelector('#sect_D #nextBtn'); btn.disabled = false; btn.classList.replace('btn-secondary', 'btn-primary'); btn.innerText = "Proceed to Next"; } }
-    
+
+    function flipCard(card) {
+        if(card.classList.contains('matched')) {
+            if(!card.classList.contains('viewed')) { card.classList.add('viewed'); clickedMatches++; if(clickedMatches===6) { const b = document.querySelector('#sect_F #nextBtn'); b.disabled=false; b.classList.replace('btn-secondary','btn-primary'); } }
+            alert(card.dataset.title + ": " + card.dataset.text); return;
+        }
+        if(flippedCards.length < 2 && !card.classList.contains('flipped')) {
+            card.classList.add('flipped'); flippedCards.push(card);
+            if(flippedCards.length === 2) {
+                setTimeout(() => {
+                    if(flippedCards[0].dataset.name === flippedCards[1].dataset.name) flippedCards.forEach(c => c.classList.add('matched'));
+                    else flippedCards.forEach(c => c.classList.remove('flipped'));
+                    flippedCards = [];
+                }, 800);
+            }
+        }
+    }
+
     function showSection(id) {
-        setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
-        document.querySelectorAll('video, iframe').forEach(m => { if(m.tagName === 'VIDEO') { m.pause(); m.currentTime = 0; } else m.src = m.src; });
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        document.getElementById('progressArea').classList.remove('d-none');
         document.getElementById('waterLevel').style.width = sectionMap[id].width;
         localStorage.setItem('lastSection', id);
-        if(id === 'sect_G') { 
-            fetch(WEB_APP_URL, {method: 'POST', mode: 'no-cors', body: JSON.stringify({name: localStorage.getItem('vName'), type: localStorage.getItem('vType'), date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString()})});
+        if(id === 'sect_F') initGame();
+        if(id === 'sect_G') {
+            fetch(WEB_APP_URL, {method:'POST', mode:'no-cors', body: JSON.stringify({name:localStorage.getItem('vName'), type:localStorage.getItem('vType'), date:new Date().toLocaleDateString(), time:new Date().toLocaleTimeString()})});
             document.getElementById('outName').innerText = localStorage.getItem('vName');
             localStorage.removeItem('lastSection');
         }
     }
-    window.onload = () => { const last = localStorage.getItem('lastSection'); if (last && localStorage.getItem('vName')) { document.getElementById('progressArea').classList.remove('d-none'); showSection(last); } else showSection('sect_login'); };
+
+    function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else alert("Wrong password."); }
+    function startCourse() { localStorage.setItem('vName', document.getElementById('nameInput').value); localStorage.setItem('vType', document.getElementById('typeInput').value); showSection('sect_A'); }
+    function selectOpt(el, qId, val) { el.parentElement.querySelectorAll('.option-box').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); selections[qId] = val; }
+    function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) showSection(nextId); else alert("Try again."); }
+    function handleHotspot(type, msg) { alert(msg); if(type==='strength') { const b = document.querySelector('#sect_D #nextBtn'); b.disabled=false; b.classList.replace('btn-secondary','btn-primary'); } }
+
+    window.onload = () => { const last = localStorage.getItem('lastSection'); if(last && localStorage.getItem('vName')) showSection(last); else showSection('sect_login'); };
 </script>
 </body>
 </html>
