@@ -334,6 +334,8 @@ function showModal(title, text) {
         video.currentTime = 0;
     });
 
+    localStorage.setItem('lastSection', id);
+        
     // 3. Reset YouTube iframes
     document.querySelectorAll('iframe').forEach(iframe => {
         iframe.src = iframe.src;
@@ -353,11 +355,17 @@ function showModal(title, text) {
 
 
         submitToSheet(); // Sends data to Sheet
+
+    
+        
         document.getElementById('outName').innerText = localStorage.getItem('vName');
         
         document.getElementById('outName').innerText = localStorage.getItem('vName');
         const now = new Date();
         document.getElementById('compDate').innerText = now.toLocaleDateString() + " at " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        localStorage.removeItem('lastSection');
+    
     }
     
     // 7. Timer logic
@@ -379,6 +387,23 @@ function showModal(title, text) {
         document.querySelector('#'+id+' #nextBtn').disabled = false;
     }
 }
+
+window.onload = function() {
+    const lastSection = localStorage.getItem('lastSection');
+    const savedName = localStorage.getItem('vName');
+
+    // If they have a name saved, take them to their last section
+    if (savedName && lastSection) {
+        showSection(lastSection);
+        
+        // Show progress bar if they have started
+        document.getElementById('progressArea').classList.remove('d-none');
+    } else {
+        // Otherwise, start at login
+        showSection('sect_login');
+    }
+};
+    
 </script>
 </body>
 </html>
