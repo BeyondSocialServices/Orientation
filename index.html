@@ -266,7 +266,7 @@ function showModal(title, text) {
     const myModal = new bootstrap.Modal(modalEl);
     myModal.show();
 }    
-    function login() { if(document.getElementById('passInput').value === "Volunteer2026") showSection('sect_instruct'); else { alert("Wrong password."); document.getElementById('passInput').value = ""; } }
+    function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else { alert("Wrong password."); document.getElementById('passInput').value = ""; } }
     function startCourse() { const n = document.getElementById('nameInput'); if(n.value.trim() === "") { alert("Enter name."); n.focus(); } else { localStorage.setItem('vName', n.value); document.getElementById('progressArea').classList.remove('d-none'); showSection('sect_A'); } }
     function selectOpt(el, qId, val) { el.parentElement.querySelectorAll('.option-box').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); selections[qId] = val; }
     function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) showSection(nextId); else alert("Incorrect or incomplete answers."); }
