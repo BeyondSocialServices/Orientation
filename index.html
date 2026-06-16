@@ -75,6 +75,12 @@
                 </ul>
             </div>
             <input type="text" id="nameInput" class="form-control mb-3" placeholder="Your Full Name">
+            <select id="typeInput" class="form-control mb-3">
+                <option value="" disabled selected>Select Registration Type</option>
+                <option value="Individual">Individual</option>
+                <option value="School">School</option>
+                <option value="Corporate">Corporate</option>
+            </select>
             <button class="btn btn-primary w-100" onclick="startCourse()">Begin Training</button>
         </div>
 
@@ -267,10 +273,42 @@ function showModal(title, text) {
     myModal.show();
 }    
     function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else { alert("Wrong password."); document.getElementById('passInput').value = ""; } }
-    function startCourse() { const n = document.getElementById('nameInput'); if(n.value.trim() === "") { alert("Enter name."); n.focus(); } else { localStorage.setItem('vName', n.value); document.getElementById('progressArea').classList.remove('d-none'); showSection('sect_A'); } }
+    function startCourse() {
+        const n = document.getElementById('nameInput');
+        const t = document.getElementById('typeInput');
+        
+        if(n.value.trim() === "") { alert("Enter name."); n.focus(); }
+        else if(t.value === "") { alert("Please select your type (Individual/School/Corporate)."); }
+        else {
+            localStorage.setItem('vName', n.value);
+            localStorage.setItem('vType', t.value); // Save the type
+            document.getElementById('progressArea').classList.remove('d-none');
+            showSection('sect_A');
+        }
+    }
     function selectOpt(el, qId, val) { el.parentElement.querySelectorAll('.option-box').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); selections[qId] = val; }
     function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) showSection(nextId); else alert("Incorrect or incomplete answers."); }
 
+    // Replace 'YOUR_WEB_APP_URL' with the URL you got from the Google Apps Script
+    const WEB_APP_URL = 'YOUR_WEB_APP_URL';
+    
+    function submitToSheet() {
+        const now = new Date();
+        const payload = {
+            name: localStorage.getItem('vName'),
+            type: localStorage.getItem('vType'),
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString()
+        };
+        
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    }
+    
     function handleHotspot(type, message) {
     // This calls your existing Modal function instead of the alert
     showModal("Observation", message);
@@ -312,6 +350,11 @@ function showModal(title, text) {
     if(id === 'sect_F') initGame();
     
     if(id === 'sect_G') {
+
+
+        submitToSheet(); // Sends data to Sheet
+        document.getElementById('outName').innerText = localStorage.getItem('vName');
+        
         document.getElementById('outName').innerText = localStorage.getItem('vName');
         const now = new Date();
         document.getElementById('compDate').innerText = now.toLocaleDateString() + " at " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
