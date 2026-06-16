@@ -1,206 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beyond Social Services | E-Learning</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        :root { --primary: #2563eb; }
-        body { background-color: #f8fafc; font-family: sans-serif; }
-        .main-card { border-radius: 24px; border: 1px solid #e2e8f0; background: #ffffff; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .section { display: none; }
-        .active { display: block; }
-        .video-desc { font-size: 0.9rem; color: #475569; margin-bottom: 10px; font-style: italic; }
-        .option-box { border: 2px solid #e2e8f0; padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
-        .option-box:hover { border-color: var(--primary); }
-        .option-box.selected { border-color: var(--primary); background: #eff6ff; font-weight: 700; color: var(--primary); }
-        .btn-primary { background: var(--primary); border: none; padding: 12px; font-weight: 600; }
-        .question-box { background: #f8fafc; border-left: 6px solid #2563eb; padding: 15px 20px; color: #1e293b; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .quiz-separator { border-top: 2px solid #e2e8f0; margin: 30px 0; padding-top: 10px; }
-        .card-game { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .card-wrapper { height: 100px; cursor: pointer; position: relative; z-index: 1; }
-        .card-back, .card-front { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; pointer-events: none; }
-        .card-back { background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .card-front { display: none; object-fit: cover; }
-        .flipped .card-back { display: none; }
-        .flipped .card-front { display: block; }
-        .hotspot { position: absolute; cursor: pointer; background: transparent; z-index: 10; }
-        .hotspot:hover { background: rgba(255, 255, 255, 0.2); }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beyond Social Services | E-Learning</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+    :root { --primary: #2563eb; }
+    body { background-color: #f8fafc; font-family: sans-serif; }
+    .main-card { border-radius: 24px; border: 1px solid #e2e8f0; background: #ffffff; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .section { display: none; }
+    .active { display: block; }
+    .video-desc { font-size: 0.9rem; color: #475569; margin-bottom: 10px; font-style: italic; }
+    .option-box { border: 2px solid #e2e8f0; padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+    .option-box:hover { border-color: var(--primary); }
+    .option-box.selected { border-color: var(--primary); background: #eff6ff; font-weight: 700; color: var(--primary); }
+    .btn-primary { background: var(--primary); border: none; padding: 12px; font-weight: 600; }
+    .question-box { background: #f8fafc; border-left: 6px solid #2563eb; padding: 15px 20px; color: #1e293b; margin-bottom: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .quiz-separator { border-top: 2px solid #e2e8f0; margin: 30px 0; padding-top: 10px; }
+    
+    /* Memory Game CSS */
+    .card-game { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+    .card-wrapper { 
+        height: 100px; 
+        cursor: pointer; 
+        position: relative; 
+        z-index: 1; /* Ensures wrapper is clickable */
+    }
+    .card-back, .card-front {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        pointer-events: none; /* Passes click to wrapper */
+    }
+    .card-back { background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .card-front { display: none; object-fit: cover; }
+    .flipped .card-back { display: none; }
+    .flipped .card-front { display: block; }
+    
+    /* Hotspots */
+    .hotspot { position: absolute; cursor: pointer; background: transparent; z-index: 10; }
+    .hotspot:hover { background: rgba(255, 255, 255, 0.2); }
+</style>
 </head>
 <body>
 
 <div class="container py-5" style="max-width: 550px;">
-    <div class="text-center mb-4"><img src="Logo.PNG" style="max-height: 80px;"></div>
-    <div class="card main-card">
-        <div id="progressArea" class="d-none mb-4"><div class="progress" style="height: 8px;"><div id="waterLevel" class="progress-bar" style="width: 0%"></div></div></div>
-        
-        <div id="sect_login" class="section">
-            <h1 class="h4 mb-3">Welcome to the E-learning Portal</h1>
-            <input type="password" id="passInput" class="form-control mb-3" placeholder="Access Code">
-            <button class="btn btn-primary w-100" onclick="login()">Enter Portal</button>
-        </div>
+    <div class="text-center mb-4"><img src="Logo.PNG" style="max-height: 80px;"></div>
 
-        <div id="sect_instruct" class="section">
-            <h1 class="h4 mb-3">Welcome!</h1>
-            <div class="alert alert-info">
-                <strong>Instructions for volunteers:</strong>
-                <ul class="mb-0">
-                    <li>You are required to watch all videos carefully.</li>
-                    <li>Please proceed to answer the quiz questions that follow.</li>
-                    <li>The "Proceed" button will unlock automatically after you've watched the video and answered all questions.</li>
-                    <li>Please do not refresh the page unnecessarily.</li>
-                    <li>Please keep a screenshot of the completion certificate at the end.</li>
-                </ul>
-            </div>
-            <input type="text" id="nameInput" class="form-control mb-3" placeholder="Your Full Name">
-            <select id="typeInput" class="form-control mb-3">
-                <option value="" disabled selected>Select Registration Type</option>
-                <option value="Individual">Individual</option>
-                <option value="School">School</option>
-                <option value="Corporate">Corporate</option>
-            </select>
-            <button class="btn btn-primary w-100" onclick="startCourse()">Begin Training</button>
-        </div>
+    <div class="card main-card">
+        <div id="progressArea" class="d-none mb-4">
+            <div class="progress" style="height: 8px;"><div id="waterLevel" class="progress-bar" style="width: 0%"></div></div>
+        </div>
+        
+        <div id="sect_login" class="section active">
+            <h1 class="h4 mb-3">Welcome to the E-learning Portal</h1>
+            <input type="password" id="passInput" class="form-control mb-3" placeholder="Access Code">
+            <button class="btn btn-primary w-100" onclick="login()">Enter Portal</button>
+        </div>
 
-        <div id="sect_A" class="section"><h2 class="h5">Section A: Introduction to Beyond</h2>
-            <div class="video-desc">This video provides an overview of our beginning, mission and vision. We will dive deeper into our approach and community in the subsequent sections.</div>
-            <div class="ratio ratio-16x9 my-3"><iframe src="https://www.youtube.com/embed/HYiSWDbvM60" allowfullscreen></iframe></div>
-            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="markAndMove('sect_B')">Please wait...</button></div>
+        <div id="sect_instruct" class="section">
+            <h1 class="h4 mb-3">Welcome!</h1>
+            <div class="alert alert-info">
+                <strong>Instructions for volunteers :</strong>
+                <ul class="mb-0">
+                    <li>You are required to watch all videos carefully.</li>
+                    <li>Please proceed to answer the quiz questions that follow.</li>
+                    <li>The "Proceed" button will unlock automatically after you've watched the video and answered all questions.</li>
+                    <li>Please do not refresh the page unnecessarily.</li>
+                    <li>Please keep a screenshot of the completion certificate at the end.</li>
+                </ul>
+            </div>
+            <input type="text" id="nameInput" class="form-control mb-3" placeholder="Your Full Name">
+            <select id="typeInput" class="form-control mb-3">
+                <option value="" disabled selected>Select Registration Type</option>
+                <option value="Individual">Individual</option>
+                <option value="School">School</option>
+                <option value="Corporate">Corporate</option>
+            </select>
+            <button class="btn btn-primary w-100" onclick="startCourse()">Begin Training</button>
+        </div>
 
-        <div id="sect_B" class="section"><h2 class="h5">Section B: Who do we serve?</h2>
-            <div class="video-desc">Learn about the community we serve! We refer to them as our members! In this section, we will explore the concept of relative and absolute poverty and how it affect our members.</div>
-            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectB.mp4" type="video/mp4"></video></div>
-            <div class="question-box">Despite our nation's progress and development, some of our community members still face difficulties in their daily lifes. What is the best explanation for this?</div>
-            <div id="group_B1"><div class="option-box" onclick="selectOpt(this, 'B1', 'A')">Intentional poor person decisions leading to undesirable outcomes</div><div class="option-box" onclick="selectOpt(this, 'B1', 'B')">Systematic barriers making it difficult for individuals to porgress</div><div class="option-box" onclick="selectOpt(this, 'B1', 'C')">Members live in despair and do not have a dream for the future</div></div>
-            <div class="quiz-separator"></div>
-            <div class="question-box">Many of our community members are said to be "marginalised". What does it mean to be "marginalised" in society?</div>
-            <div id="group_B2"><div class="option-box" onclick="selectOpt(this, 'B2', 'A')">They have been pushed to the edge of society and lack equal access to opportunities and resources</div><div class="option-box" onclick="selectOpt(this, 'B2', 'B')">They are individuals who have chosen to live separately from the rest of the community by preference</div><div class="option-box" onclick="selectOpt(this, 'B2', 'C')">They are people who have higher income levels than the average person but choose to live modestly</div></div>
-            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('B', 'sect_C')">Submit</button></div>
+        <div id="sect_A" class="section"><h2 class="h5">Section A: Introduction to Beyond</h2>
+            <div class="video-desc">This video provides an overview of our beginning, mission and vision. We will dive deeper into our approach and community in the subsequent sections. </div>
+            <div class="ratio ratio-16x9 my-3"><iframe src="https://www.youtube.com/embed/HYiSWDbvM60" allowfullscreen></iframe></div>
+            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="showSection('sect_B')">Please wait...</button></div>
 
-        <div id="sect_C" class="section"><h2 class="h5">Section C: Rental Neighbourhoods</h2>
-            <div class="video-desc">Our members mostly lives in rental neighbourhoods in central Singapore. How much do you know about rental neighbourhoods? Find out more in this section.</div>
-            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectC.mp4" type="video/mp4"></video></div>
-            <div class="video-desc">The open-source video below provides a glimpse into the life of the youth living in a rental neighbourhood. Pay close attention not only to the stressors but also the community spirit exhibited! Credit:@OGS.Offical</div>
-            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="Zakia.mp4" type="video/mp4"></video></div>
-            <div class="question-box">According to Zakia, where do the youths turn to as their "safe space" when they are faced with problems?</div>
-            <div id="group_C1"><div class="option-box" onclick="selectOpt(this, 'C1', 'A')">Their Community</div><div class="option-box" onclick="selectOpt(this, 'C1', 'B')">Their Schools</div><div class="option-box" onclick="selectOpt(this, 'C1', 'C')">Their Relatives</div></div>
-            <div class="quiz-separator"></div>
-            <div class="question-box">According to Zakia, how did the youths express their emotions when they are feeling troubled?</div>
-            <div id="group_C2"><div class="option-box" onclick="selectOpt(this, 'C2', 'A')">Talking to a counsellor</div><div class="option-box" onclick="selectOpt(this, 'C2', 'B')">Drawing and Arts</div><div class="option-box" onclick="selectOpt(this, 'C2', 'C')">They keep it to themselves</div></div>
-            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('C', 'sect_D')">Submit</button></div>
+        <div id="sect_B" class="section"><h2 class="h5">Section B: Who do we serve?</h2>
+            <div class="video-desc">Learn about the community we serve! We refer to them as our members! In this section, we will explore the concept of relative and absolute poverty and how it affect our members.</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectB.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+            <div class="question-box">Despite our nation's progress and development, some of our community members still face difficulties in their daily lifes. What is the best explanation for this?</div><div id="group_B1"><div class="option-box" onclick="selectOpt(this, 'B1', 'A')">Intentional poor person decisions leading to undesirable outcomes</div><div class="option-box" onclick="selectOpt(this, 'B1', 'B')">Systematic barriers making it difficult for individuals to porgress</div><div class="option-box" onclick="selectOpt(this, 'B1', 'C')">Members live in despair and do not have a dream for the future</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">Many of our community members are said to be "marginalised". What does it mean to be "marginalised" in society?</div><div id="group_B2"><div class="option-box" onclick="selectOpt(this, 'B2', 'A')">They have been pushed to the edge of society and lack equal access to opportunities and resources</div><div class="option-box" onclick="selectOpt(this, 'B2', 'B')">They are individuals who have chosen to live separately from the rest of the community by preference</div><div class="option-box" onclick="selectOpt(this, 'B2', 'C')">They are people who have higher income levels than the average person but choose to live modestly</div></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('B', 'sect_C')">Submit</button></div>
 
-        <div id="sect_D" class="section"><h2 class="h5">Section D: What do you see?</h2>
-            <div class="question-box">The illustration below shows a typical day in a rental neighbourhood. Click on the area which attracts your attention!</div>
-            <div style="position: relative; width: 100%;"><img src="Activity.PNG" class="img-fluid my-3">
-                <div class="hotspot" style="top: 58%; left: 10%; width: 10%; height: 16%;" onclick="handleHotspot('weakness', 'Interesting observation! What you have identified is a isolated elderly living alone which is a common sight in rental neighbourhoods. While challenges exist, let’s try to focus on the positives. Click on an area which reflects the strengths of the community.')"></div>
-                <div class="hotspot" style="top: 40%; left: 80%; width: 18%; height: 18%;" onclick="handleHotspot('weakness', 'Interesting observation! What you have identified is a student struggling with his school work. Indeed, some students do face some challenges when it comes to academics. While challenges exist, let us try to focus on the community strengths.')"></div>
-                <div class="hotspot" style="top: 75%; left: 24%; width: 12%; height: 20%;" onclick="handleHotspot('strength', 'These are neighbours helping out with the food distribution! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 75%; left: 37%; width: 33%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are volunteers from the community helping out with our initiatives. Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 75%; left: 79%; width: 20%; height: 20%;" onclick="handleHotspot('strength', 'Right! This is our signature academic programme where students help one another with their school work! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 52%; left: 52%; width: 20%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the neighbourhood garden! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 10%; left: 83%; width: 20%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the neighbourhood garden! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 39%; left: 1%; width: 12%; height: 12%;" onclick="handleHotspot('strength', 'Interesting! These are our youths bonding over sports! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-                <div class="hotspot" style="top: 55%; left: 21%; width: 12%; height: 12%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the community! They keep a look out for one another to ensure everyone is safe and healthy! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
-            </div>
-            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="markAndMove('sect_E')">Proceed to Next</button></div>
+        <div id="sect_C" class="section"><h2 class="h5">Section C: Rental Neighbourhoods</h2>
+            <div class="video-desc">Our members mostly lives in rental neighbourhoods in central Singapore. How much do you know about rental neighbourhoods? Find out more in this section.</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectC.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+            <div class="video-desc">The open-source video below provides a glimpse into the life of the youth living in a rental neighbourhood. Pay close attention not only to the stressors but also the community spirit exhibited! Credit:@OGS.Offical</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="Zakia.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+            <div class="question-box">According to Zakia, where do the youths turn to as their "safe space" when they are faced with problems?</div><div id="group_C1"><div class="option-box" onclick="selectOpt(this, 'C1', 'A')">Their Community</div><div class="option-box" onclick="selectOpt(this, 'C1', 'B')">Their Schools</div><div class="option-box" onclick="selectOpt(this, 'C1', 'C')">Their Relatives</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">According to Zakia, how did the youths express their emotions when they are feeling troubled?</div><div id="group_C2"><div class="option-box" onclick="selectOpt(this, 'C2', 'A')">Talking to a counsellor</div><div class="option-box" onclick="selectOpt(this, 'C2', 'B')">Drawing and Arts</div><div class="option-box" onclick="selectOpt(this, 'C2', 'C')">They keep it to themselves</div></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('C', 'sect_D')">Submit</button></div>
 
-        <div id="sect_E" class="section"><h2 class="h5">Section E: Our Approach</h2>
-            <div class="video-desc">This final section highlights our approach and framework.</div>
-            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectE.mp4" type="video/mp4"></video></div>
-            <div class="question-box">At Beyond, we focus on ___________ .</div>
-            <div id="group_E1"><div class="option-box" onclick="selectOpt(this, 'E1', 'A')">What's Easy</div><div class="option-box" onclick="selectOpt(this, 'E1', 'B')">What's Wrong</div><div class="option-box" onclick="selectOpt(this, 'E1', 'C')">What's Strong</div></div>
-            <div class="quiz-separator"></div>
-            <div class="question-box">In the ABCD approach, an "asset" refers to:</div>
-            <div id="group_E2"><div class="option-box" onclick="selectOpt(this, 'E2', 'A')">Our member's rental flat and monetary belongings and tangible resources</div><div class="option-box" onclick="selectOpt(this, 'E2', 'B')">Our member's strengths, skills, talents, resources, passions, and interests</div><div class="option-box" onclick="selectOpt(this, 'E2', 'C')">Beyond's sponsors and donors but not limited to monetary contributions</div></div>
-            <div class="quiz-separator"></div>
-            <div class="video-desc">The video below shows one of our Neighbourhood Leaders Marlina featured on a CNA interview. Marlina initiated the programme and with the help of our facilitation, started a patrol team and community fridge. Listen to what Marlina has to say! Credit:@channelnewsasia</div>
-            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="marlina.mp4" type="video/mp4"></video></div>
-            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('E', 'sect_F')">Submit</button></div>
+        <div id="sect_D" class="section">
+            <h2 class="h5">Section D: What do you see?</h2>
+            <div class="question-box">The illustration below shows a typical day in a rental neighbourhood. Click on the area which attracts your attention!</div>
+            
+            <div style="position: relative; display: inline-block; width: 100%;">
+                <img src="Activity.PNG" class="img-fluid my-3" style="width: 100%; display: block;">
+                
+                <div class="hotspot" style="top: 58%; left: 10%; width: 10%; height: 16%;" onclick="handleHotspot('weakness', 'Interesting observation! What you have identified is a isolated elderly living alone which is a common sight in rental neighbourhoods. While challenges exist, let’s try to focus on the positives. Click on an area which reflects the strengths of the community.')"></div>
+                <div class="hotspot" style="top: 40%; left: 80%; width: 18%; height: 18%;" onclick="handleHotspot('weakness', 'Interesting observation! What you have identified is a student struggling with his school work. Indeed, some students do face some challenges when it comes to academics. While challenges exist, let us try to focus on the community strengths.')"></div>
+                <div class="hotspot" style="top: 75%; left: 24%; width: 12%; height: 20%;" onclick="handleHotspot('strength', 'These are neighbours helping out with the food distribution! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 75%; left: 37%; width: 33%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are volunteers from the community helping out with our initiatives. Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 75%; left: 79%; width: 20%; height: 20%;" onclick="handleHotspot('strength', 'Right! This is our signature academic programme where students help one another with their school work! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 52%; left: 52%; width: 20%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the neighbourhood garden! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 10%; left: 83%; width: 20%; height: 18%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the neighbourhood garden! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 39%; left: 1%; width: 12%; height: 12%;" onclick="handleHotspot('strength', 'Interesting! These are our youths bonding over sports! They bring with them their valuable skills and expertise! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+                <div class="hotspot" style="top: 55%; left: 21%; width: 12%; height: 12%;" onclick="handleHotspot('strength', 'Interesting! These are community members hanging out in the community! They keep a look out for one another to ensure everyone is safe and healthy! Great eye! Our organization focuses on what is strong, not just what is wrong.')"></div>
+            </div>
+        
+            <button id="nextBtn" class="btn btn-secondary w-100" disabled onclick="showSection('sect_E')">Proceed to Next</button>
+        </div>
+        
+        
+        <div id="sect_E" class="section"><h2 class="h5">Section E: Our Approach</h2>
+            <div class="video-desc">This final section highlights our approach and framework.</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="sectE.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+            <div class="question-box">At Beyond, we focus on ___________ .</div><div id="group_E1"><div class="option-box" onclick="selectOpt(this, 'E1', 'A')">What's Easy</div><div class="option-box" onclick="selectOpt(this, 'E1', 'B')">What's Wrong</div><div class="option-box" onclick="selectOpt(this, 'E1', 'C')">What's Strong</div></div>
+            <div class="quiz-separator"></div>
+            <div class="question-box">In the ABCD approach, an "asset" refers to:</div><div id="group_E2"><div class="option-box" onclick="selectOpt(this, 'E2', 'A')">Our member's rental flat and monetary belongings and tangible resources</div><div class="option-box" onclick="selectOpt(this, 'E2', 'B')">Our member's strengths, skills, talents, resources, passions, and interests</div><div class="option-box" onclick="selectOpt(this, 'E2', 'C')">Beyond's sponsors and donors but not limited to monetary contributions</div></div>
+            <div class="quiz-separator"></div>
+            <div class="video-desc">The video below shows one of our Neighbourhood Leaders Marlina featured on a CNA interview. Marlina initiated the programme and with the help of our facilitation, started a patrol team and community fridge. Listen to what Marlina has to say! Credit:@channelnewsasia</div>
+            <div class="ratio ratio-16x9 my-3"><video controls playsinline><source src="marlina.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="checkQuiz('E', 'sect_F')">Submit</button></div>
 
-        <div id="sect_F" class="section"><h2 class="h5">Section F: Summary</h2>
-            <div class="video-desc">Before we end, it is important to familiarise yourself with our Code Of Conduct. Take a look at our Code of Conduct below:</div>
-            <img src="COC.jpg" class="img-fluid"><div class="quiz-separator"></div>
-            <h2 class="h5">Memory Match: Key Takeaways</h2>
-            <div class="video-desc">Play the card flipping game below to help you consolidate your learning. Flip the cards and find the matching pairs!</div>
-            <div class="alert alert-warning mt-3"><strong>Action Required:</strong> Please click on each of your 3 matched pairs to reveal the key takeaways!</div>
-            <div class="card-game" id="memory-game"></div>
-            <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="markAndMove('sect_G')">Match all pairs to proceed</button></div>
 
-        <div id="sect_G" class="section"><div style="border: 10px solid #2563eb; padding: 40px; text-align: center;"><h1>Certificate of Completion</h1><h2 id="outName"></h2><p id="compDate"></p></div>
-            <button class="btn btn-primary w-100 mt-4" onclick="window.print()">Download / Print Certificate</button></div>
-    </div>
+
+            <div id="sect_F" class="section"><h2 class="h5">Section F: Summary</h2>
+                <div class="video-desc">Before we end, it is important to familiarise yourself with our Code Of Conduct. Take a look at our Code of Conduct below:</div>
+                <img src="COC.jpg" alt="" class="img-fluid">
+                <div class="quiz-separator"></div>
+                <h2 class="h5">Memory Match: Key Takeaways</h2>
+                <div class="video-desc">Play the card flipping game below to help you consolidate your learning. Flip the cards and find the matching pairs!</div>
+
+                <div class="alert alert-warning mt-3">
+                    <strong>Action Required:</strong> Please click on each of your 3 matched pairs to reveal the key takeaways!
+                </div>
+                
+                <div class="card-game" id="memory-game"></div>
+                <button id="nextBtn" class="btn btn-secondary w-100 mt-3" disabled onclick="showSection('sect_G')">Match all pairs to proceed</button>
+            </div>        
+
+
+        <div id="sect_G" class="section">
+    <div id="certificate" style="border: 10px solid #2563eb; padding: 40px; text-align: center; background: #fff; max-width: 700px; margin: auto;">
+        <h1 style="font-family: serif; font-size: 2.5rem; color: #2563eb; text-transform: uppercase;">Certificate of Completion</h1>
+        <hr style="border: 1px solid #2563eb; margin: 20px 0;">
+        <p style="font-size: 1.2rem; margin-top: 30px;">This is to certify that</p>
+        <h2 id="outName" style="font-size: 2rem; font-weight: bold; border-bottom: 2px solid #000; display: inline-block; padding: 0 20px;">[Name]</h2>
+        <p style="font-size: 1.2rem; margin-top: 20px;">has successfully completed the online volunteer orientation</p>
+        <p style="font-size: 1.1rem; color: #555; margin-top: 20px;" id="certDate">on <span id="compDate"></span></p>
+    </div>
+    <button class="btn btn-primary w-100 mt-4" onclick="window.print()">Download / Print Certificate</button>
+</div>
+    </div>
 </div>
 
+<!-- Modal for reading more -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 id="modalTitle">Title</h5>
+        <p id="modalText">Detailed information goes here.</p>
+        <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
 <script>
-    const sectionMap = { 'sect_A': {width:'14%', timer:10}, 'sect_B': {width:'28%', timer:10}, 'sect_C': {width:'42%', timer:10}, 'sect_D': {width:'57%', timer:0}, 'sect_E': {width:'71%', timer:10}, 'sect_F': {width:'85%', timer:0}, 'sect_G': {width:"100%", timer:0} };
-    const answers = { 'B': {q1:'B', q2:'A'}, 'C': {q1:'A', q2:'B'}, 'E': {q1:'C', q2:'B'} };
-    let completed = JSON.parse(localStorage.getItem('completed')) || {};
-    let selections = {};
-    let flippedCards = [], clickedMatches = 0;
+    const sectionMap = { 'sect_A': {width:'14%', timer:10}, 'sect_B': {width:'28%', timer:10}, 'sect_C': {width:'42%', timer:10}, 'sect_D': {width:'57%', timer:0}, 'sect_E': {width:'71%', timer:10}, 'sect_F': {width:'85%', timer:0},'sect_G':{width:"100%",timer:10} };
+    const answers = { 'B': {q1:'B', q2:'A'}, 'C': {q1:'A', q2:'B'}, 'E': {q1:'C', q2:'B'} };
+    let selections = {};
 
-    function initGame() {
-        const grid = document.getElementById('memory-game');
-        grid.innerHTML = '';
-        const cardData = [
-            { name: 'c1', img: 'Flip1.jpg', title: 'Our Members, Our Assets', text: 'Remember, they are our members not beneficiaries! All of them have something to contribute!' },
-            { name: 'c1', img: 'Flip1.jpg', title: 'Our Members, Our Assets', text: 'Remember, they are our members not beneficiaries! All of them have something to contribute!' },
-            { name: 'c2', img: 'Flip2.jpg', title: 'ABCD', text: 'ABCD is the core of what we do! Everyone in the community has a role to play!' },
-            { name: 'c2', img: 'Flip2.jpg', title: 'ABCD', text: 'ABCD is the core of what we do! Everyone in the community has a role to play!' },
-            { name: 'c3', img: 'Flip3.jpg', title: 'Strong not Wrong', text: 'We focus on the possibilities and not the problems!' },
-            { name: 'c3', img: 'Flip3.jpg', title: 'Strong not Wrong', text: 'We focus on the possibilities and not the problems!' }
-        ].sort(() => Math.random() - 0.5);
-        
-        cardData.forEach(item => {
-            grid.innerHTML += `<div class="card-wrapper" onclick="flipCard(this)" data-name="${item.name}" data-title="${item.title}" data-text="${item.text}"><div class="card-back">?</div><img src="${item.img}" class="card-front"></div>`;
-        });
-    }
+    const cardData = [
+    { name: 'c1', img: 'Flip1.jpg', title: 'Our Members, Our Assets', text: 'Remember, they are our members not beneficiaries! All of them have something to contribute!' },
+    { name: 'c1', img: 'Flip1.jpg', title: 'Our Members, Our Assets', text: 'Remember, they are our members not beneficiaries! All of them have something to contribute!' },
+    { name: 'c2', img: 'Flip2.jpg', title: 'ABCD', text: 'ABCD is the core of what we do! Everyone in the community has a role to play!' },
+    { name: 'c2', img: 'Flip2.jpg', title: 'ABCD', text: 'ABCD is the core of what we do! Everyone in the community has a role to play!' },
+    { name: 'c3', img: 'Flip3.jpg', title: 'Strong not Wrong', text: 'We focus on the possibilities and not the problems!' },
+    { name: 'c3', img: 'Flip3.jpg', title: 'Strong not wrong', text: 'We focus on the possibilities and not the problems!' }
+    ];
+let flippedCards = [];
+let matchedPairs = 0;
+let clickedMatches = 0;
 
-    function flipCard(card) {
-        if(card.classList.contains('matched')) {
-            if(!card.classList.contains('viewed')) { card.classList.add('viewed'); clickedMatches++; if(clickedMatches===6) { const b = document.querySelector('#sect_F #nextBtn'); b.disabled=false; b.classList.replace('btn-secondary','btn-primary'); b.innerText = "Proceed to Certificate"; } }
-            alert(card.dataset.title + ": " + card.dataset.text); return;
-        }
-        if(flippedCards.length < 2 && !card.classList.contains('flipped')) {
-            card.classList.add('flipped'); flippedCards.push(card);
-            if(flippedCards.length === 2) {
-                setTimeout(() => {
-                    if(flippedCards[0].dataset.name === flippedCards[1].dataset.name) flippedCards.forEach(c => c.classList.add('matched'));
-                    else flippedCards.forEach(c => c.classList.remove('flipped'));
-                    flippedCards = [];
-                }, 800);
-            }
-        }
-    }
+function initGame() {
+    matchedPairs = 0;
+    clickedMatches = 0;
+    flippedCards = [];
+    const grid = document.getElementById('memory-game');
+    grid.innerHTML = '';
+    cardData.sort(() => Math.random() - 0.5);
+    cardData.forEach(item => {
+        grid.innerHTML += `
+            <div class="card-wrapper" onclick="flipCard(this)" 
+             data-name="${item.name}" 
+             data-title="${item.title}" 
+             data-text="${item.text}">
+            <div class="card-back">?</div>
+            <img src="${item.img}" class="card-front">
+        </div>`;
+    });
+}
 
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('progressArea').classList.remove('d-none');
-        document.getElementById('waterLevel').style.width = sectionMap[id].width;
-        localStorage.setItem('lastSection', id);
-        
-        const btn = document.querySelector('#'+id+' #nextBtn');
-        if(completed[id] && btn) { btn.disabled=false; btn.classList.replace('btn-secondary','btn-primary'); btn.innerText="Proceed to Next"; return; }
-        
-        if(id === 'sect_F') initGame();
-        if(id === 'sect_G') { document.getElementById('outName').innerText = localStorage.getItem('vName'); document.getElementById('compDate').innerText = new Date().toLocaleDateString(); localStorage.removeItem('lastSection'); }
-        if(sectionMap[id].timer > 0 && btn) {
-            let timer = sectionMap[id].timer;
-            let interval = setInterval(() => { timer--; if(timer <= 0) { clearInterval(interval); btn.disabled=false; btn.classList.replace('btn-secondary', 'btn-primary'); btn.innerText="Proceed to Next"; } }, 1000);
-        }
-    }
+function flipCard(card) {
+    // 1. If already matched, show the info and update click count
+    if (card.classList.contains('matched')) {
+        // Only count if this specific match hasn't been "viewed" yet
+        if (!card.classList.contains('viewed')) {
+            card.classList.add('viewed');
+            clickedMatches++;
+            
+            // Check if user has viewed all 3 pairs
+            if (clickedMatches === 3) {
+                const btn = document.querySelector('#sect_F #nextBtn');
+                btn.disabled = false;
+                btn.classList.replace('btn-secondary', 'btn-primary');
+                btn.innerText = "Proceed to Certificate";
+            }
+        }
+        showModal(card.dataset.title, card.dataset.text);
+        return;
+    }
 
-    function markAndMove(nextId) { completed[document.querySelector('.section.active').id] = true; localStorage.setItem('completed', JSON.stringify(completed)); showSection(nextId); }
-    function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) markAndMove(nextId); else alert("Incorrect or incomplete answers."); }
-    function handleHotspot(type, msg) { alert(msg); if(type==='strength') { const b = document.querySelector('.section.active #nextBtn'); b.disabled=false; b.classList.replace('btn-secondary', 'btn-primary'); } }
-    function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else alert("Wrong password."); }
-    function startCourse() { localStorage.setItem('vName', document.getElementById('nameInput').value); localStorage.setItem('vType', document.getElementById('typeInput').value); showSection('sect_A'); }
-    function selectOpt(el, qId, val) { el.parentElement.querySelectorAll('.option-box').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); selections[qId] = val; }
+    // 2. Normal flip logic
+    if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
+        card.classList.add('flipped');
+        flippedCards.push(card);
+        
+        if (flippedCards.length === 2) {
+            setTimeout(() => {
+                if (flippedCards[0].dataset.name === flippedCards[1].dataset.name) {
+                    flippedCards.forEach(c => c.classList.add('matched'));
+                    matchedPairs++;
+                    // IMPORTANT: We REMOVED the button enabling logic from here!
+                } else {
+                    flippedCards.forEach(c => c.classList.remove('flipped'));
+                }
+                flippedCards = [];
+            }, 800);
+        }
+    }
+}
+    
+function showModal(title, text) {
+    // 1. Update text
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalText').innerText = text;
 
-    window.onload = () => { const last = localStorage.getItem('lastSection'); if(last && localStorage.getItem('vName')) showSection(last); else showSection('sect_login'); };
+    // 2. Open modal
+    const modalEl = document.getElementById('infoModal');
+    const myModal = new bootstrap.Modal(modalEl);
+    myModal.show();
+}    
+    function login() { if(document.getElementById('passInput').value === "Noonebeyondhelp") showSection('sect_instruct'); else { alert("Wrong password."); document.getElementById('passInput').value = ""; } }
+    function startCourse() {
+        const n = document.getElementById('nameInput');
+        const t = document.getElementById('typeInput');
+        
+        if(n.value.trim() === "") { alert("Enter name."); n.focus(); }
+        else if(t.value === "") { alert("Please select your type (Individual/School/Corporate)."); }
+        else {
+            localStorage.setItem('vName', n.value);
+            localStorage.setItem('vType', t.value); // Save the type
+            document.getElementById('progressArea').classList.remove('d-none');
+            showSection('sect_A');
+        }
+    }
+    function selectOpt(el, qId, val) { el.parentElement.querySelectorAll('.option-box').forEach(o => o.classList.remove('selected')); el.classList.add('selected'); selections[qId] = val; }
+    function checkQuiz(sec, nextId) { if(selections[sec+'1'] === answers[sec].q1 && selections[sec+'2'] === answers[sec].q2) showSection(nextId); else alert("Incorrect or incomplete answers."); }
+
+    // Replace 'YOUR_WEB_APP_URL' with the URL you got from the Google Apps Script
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyvVxozjNm1hb9eRNOOhM8r9cCZTB6q9OCkxvwHZ2tZ77DxKy5rG6M9CMaAkTNApp4_JQ/exec';
+    
+    function submitToSheet() {
+        const now = new Date();
+        const payload = {
+            name: localStorage.getItem('vName'),
+            type: localStorage.getItem('vType'),
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString()
+        };
+        
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    }
+    
+    function handleHotspot(type, message) {
+    // This calls your existing Modal function instead of the alert
+    showModal("Observation", message);
+    
+    // Logic: Only unlock if the type is 'strength'
+    if (type === 'strength') {
+        const btn = document.querySelector('#sect_D #nextBtn');
+        btn.disabled = false;
+        btn.classList.replace('btn-secondary', 'btn-primary');
+        btn.innerText = "Proceed to Next";
+    }
+}
+    
+    function showSection(id) {
+    // 1. Scroll to top with a tiny delay so it works even when Section F loads content
+    setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 50);
+
+    // 2. Pause and reset all videos
+    document.querySelectorAll('video').forEach(video => {
+        video.pause();
+        video.currentTime = 0;
+    });
+
+    localStorage.setItem('lastSection', id);
+        
+    // 3. Reset YouTube iframes
+    document.querySelectorAll('iframe').forEach(iframe => {
+        iframe.src = iframe.src;
+    });
+
+    // 4. Handle section visibility
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    
+    // 5. Update progress bar
+    document.getElementById('waterLevel').style.width = sectionMap[id].width;
+    
+    // 6. Section-specific logic
+    if(id === 'sect_F') initGame();
+    
+    if(id === 'sect_G') {
+
+
+        submitToSheet(); // Sends data to Sheet
+
+    
+        
+        document.getElementById('outName').innerText = localStorage.getItem('vName');
+        
+        document.getElementById('outName').innerText = localStorage.getItem('vName');
+        const now = new Date();
+        document.getElementById('compDate').innerText = now.toLocaleDateString() + " at " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        localStorage.removeItem('lastSection');
+    
+    }
+    
+    // 7. Timer logic
+    let timer = sectionMap[id].timer;
+    if(timer > 0) {
+        const btn = document.querySelector('#'+id+' #nextBtn');
+        btn.disabled = true;
+        let interval = setInterval(() => {
+            timer--;
+            if(timer <= 0) { 
+                clearInterval(interval); 
+                btn.disabled = false; 
+                btn.innerText = "Proceed to Next"; 
+                btn.classList.replace('btn-secondary', 'btn-primary'); 
+            }
+        }, 1000);
+    } else if(id !== 'sect_D' && id !== 'sect_F') { 
+        // We added && id !== 'sect_F' so the button stays locked until game completion
+        document.querySelector('#'+id+' #nextBtn').disabled = false;
+    }
+}
+
+window.onload = function() {
+    const lastSection = localStorage.getItem('lastSection');
+    const savedName = localStorage.getItem('vName');
+
+    // If they have a name saved, take them to their last section
+    if (savedName && lastSection) {
+        showSection(lastSection);
+        
+        // Show progress bar if they have started
+        document.getElementById('progressArea').classList.remove('d-none');
+    } else {
+        // Otherwise, start at login
+        showSection('sect_login');
+    }
+};
+    
 </script>
 </body>
 </html>
