@@ -388,21 +388,21 @@ function showModal(title, text) {
     }
 }
 
-window.onload = function() {
+
+window.addEventListener('DOMContentLoaded', (event) => {
     const lastSection = localStorage.getItem('lastSection');
     const savedName = localStorage.getItem('vName');
 
-    // If they have a name saved, take them to their last section
-    if (savedName && lastSection) {
-        showSection(lastSection);
-        
-        // Show progress bar if they have started
-        document.getElementById('progressArea').classList.remove('d-none');
-    } else {
-        // Otherwise, start at login
-        showSection('sect_login');
-    }
-};
+    // Use a small delay to ensure the UI is rendered before showing the section
+    setTimeout(() => {
+        if (savedName && lastSection) {
+            showSection(lastSection);
+            document.getElementById('progressArea').classList.remove('d-none');
+        } else {
+            showSection('sect_login');
+        }
+    }, 100); 
+});
     
 </script>
 </body>
